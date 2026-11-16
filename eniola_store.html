@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ENIOLA STORE | Shop Smart</title>
+<style>
+:root{--blue:#0646d8;--deep:#082b91;--cyan:#25c8ff;--bg:#f4f8ff;--text:#17233d}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+header{background:linear-gradient(120deg,#052b91,#0878f9);color:#fff;padding:18px 5%;display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap}
+.brand{font-weight:900;font-size:25px;letter-spacing:1px}.brand span{color:#65e2ff}
+.search{flex:1;max-width:520px;display:flex}.search input{width:100%;padding:13px;border:0;border-radius:10px 0 0 10px;font-size:15px}.search button{border:0;background:#20c7ff;color:#06318d;padding:0 18px;border-radius:0 10px 10px 0;font-weight:bold}
+.cart{background:#fff;color:#0736a6;border:0;border-radius:10px;padding:12px 16px;font-weight:bold}
+.hero{margin:22px 5%;border-radius:20px;padding:30px;background:linear-gradient(120deg,#0634b8,#168dff);color:white;display:flex;align-items:center;justify-content:space-between;gap:20px;overflow:hidden}
+.hero h1{font-size:clamp(28px,5vw,48px);margin:0 0 10px}.hero p{margin:0 0 20px;font-size:17px}.hero .badge{font-size:70px}
+.hero a{display:inline-block;background:#fff;color:#0646d8;padding:12px 20px;border-radius:30px;text-decoration:none;font-weight:bold}
+.controls{margin:0 5% 18px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+select,input[type=number]{padding:10px;border:1px solid #d2def5;border-radius:9px;background:#fff}
+main{padding:0 5% 40px}.section-title{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px}
+.card{background:#fff;border-radius:15px;overflow:hidden;box-shadow:0 5px 18px #123a7a12;border:1px solid #e8efff}
+.pic{height:175px;display:flex;align-items:center;justify-content:center;font-size:65px;background:linear-gradient(145deg,#e8f4ff,#f7fbff)}
+.info{padding:14px}.name{font-weight:700;min-height:40px}.price{color:#0646d8;font-weight:900;font-size:19px;margin:9px 0 3px}.usd{font-size:13px;color:#65728b}.add{width:100%;border:0;background:var(--blue);color:white;padding:11px;border-radius:9px;font-weight:bold;margin-top:12px;cursor:pointer}.add:hover{background:#032d9b}
+.note{font-size:12px;color:#64718b;margin:20px 0}.empty{padding:35px;text-align:center;color:#60708d}
+footer{text-align:center;padding:25px;background:#071e65;color:#dceaff}
+@media(max-width:600px){header{padding:15px}.hero{margin:15px;padding:22px}.hero .badge{font-size:45px}.controls{margin:0 15px 15px}main{padding:0 15px 30px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.pic{height:130px;font-size:50px}.info{padding:10px}.name{font-size:14px}}
+</style></head>
+<body>
+<header><div class="brand">🛍️ ENIOLA <span>STORE</span></div>
+<div class="search"><input id="search" placeholder="Search products..."><button onclick="render()">Search</button></div>
+<button class="cart" onclick="showCart()">🛒 Cart <span id="count">0</span></button></header>
+<section class="hero"><div><h1>Shop Smart. Pay Less.</h1><p>Discover everyday favorites at amazing prices.</p><a href="#products">Explore products →</a></div><div class="badge">🛍️</div></section>
+<div class="controls"><label>Category <select id="category" onchange="render()"><option>All</option><option>Fashion</option><option>Electronics</option><option>Home</option><option>Beauty</option><option>Accessories</option></select></label>
+<label>USD → NGN rate <input id="rate" type="number" value="1600" min="1" step="1" style="width:100px" onchange="render()"> ₦/$</label>
+</div>
+<main id="products"><div class="section-title"><h2>Popular picks</h2><span id="total"></span></div><div class="grid" id="grid"></div>
+<p class="note">Price note: These are illustrative sample prices inspired by budget marketplace products—not live Temu listings or verified Temu prices. Exchange rate is editable. Confirm supplier prices, shipping, duties and availability before selling.</p></main>
+<footer>© 2026 ENIOLA STORE • Shop Smart • Pay Less • Live Better</footer>
+<script>
+const items=[
+["Mini LED desk lamp","Home","💡",4.99],["Wireless earbuds","Electronics","🎧",8.50],["Phone stand","Accessories","📱",2.49],["Crossbody bag","Fashion","👜",9.99],
+["Makeup brush set","Beauty","💄",5.75],["USB-C charging cable","Electronics","🔌",1.99],["Oversized T-shirt","Fashion","👕",7.99],["Kitchen storage box","Home","🧺",6.25],
+["Sunglasses","Accessories","🕶️",3.49],["Hair styling clips","Beauty","🎀",2.99],["Portable mini fan","Electronics","🌀",6.99],["Decorative wall lights","Home","✨",10.99],
+["Sneakers","Fashion","👟",18.50],["Smart watch strap","Accessories","⌚",3.99],["Lip gloss set","Beauty","💋",4.50],["Bluetooth speaker","Electronics","🔊",12.99],
+["Jewelry set","Accessories","💎",5.99],["Water bottle","Home","🥤",4.25],["Wallet","Fashion","👛",6.49],["LED night light","Home","🌙",3.75]
+];
+let cart=[];
+const money=n=>new Intl.NumberFormat("en-NG",{style:"currency",currency:"NGN",maximumFractionDigits:0}).format(n);
+function render(){let q=document.getElementById("search").value.toLowerCase(),cat=document.getElementById("category").value,rate=+document.getElementById("rate").value||1600;
+let shown=items.filter(x=>(cat==="All"||x[1]===cat)&&x[0].toLowerCase().includes(q));
+document.getElementById("total").textContent=shown.length+" products";
+document.getElementById("grid").innerHTML=shown.map(x=>`<article class="card"><div class="pic">${x[2]}</div><div class="info"><div class="name">${x[0]}</div><div class="price">$${x[3].toFixed(2)}</div><div class="usd">${money(x[3]*rate)}</div><button class="add" onclick="add('${x[0]}')">＋ Add to cart</button></div></article>`).join("")||'<div class="empty">No products found.</div>'}
+function add(n){cart.push(n);document.getElementById("count").textContent=cart.length}
+function showCart(){if(!cart.length){alert("Your cart is empty.");return}let tally={};cart.forEach(n=>tally[n]=(tally[n]||0)+1);alert("YOUR CART\\n"+Object.entries(tally).map(([n,c])=>c+" × "+n).join("\\n")+"\\n\\n"+cart.length+" item(s). Checkout/payment is not connected yet.");}
+render();
+</script></body></html>
